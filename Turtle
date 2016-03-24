@@ -1,0 +1,295 @@
+#include<iostream>
+#include<iomanip>
+using namespace std;
+
+
+
+
+int main(){
+	
+	//int* Command = new int[7] ;  // Allocate 7 dynamic spaces 
+	char** Floor = new char*[20];
+	int Turtle_Location[2] ;       // Store the Turtle Location 
+	int face ;
+	int Command_Enter ;
+	int Command_State = -1;
+	
+	for(int i = 0 ; i <20; i++){
+		
+		Floor[i] = new char[20];		
+		
+	}
+	    
+	    
+    for(int i = 0 ; i <20 ; i++){
+       for(int j=0 ;j<20;j++){
+       	
+       	Floor[i][j] = ' ';
+       	
+       	 }	
+          	
+	}
+  
+    for(int i = 0 ; i <20 ; i++){
+       for(int j=0 ;j<20;j++){
+       	
+       	cout << Floor[i][j] ;
+       	
+       	 }	
+          cout << endl;	
+	}
+  
+   
+  
+	// Command is below
+	// 1. Pen UP
+	// 2. Pen DOWN
+	// 3. Face to Right
+	// 4. Face to Left
+	// 5. Enter the Step
+	// 6. Print 20x20 Array (if Up,Print *)
+	// 9. End	
+/*    for(int i = 0 ; i<6;i++){
+		
+		*(Command + i ) = i+1;
+		
+	} 
+	    *(Command + 6 ) = 9; */ 
+	
+  //	Command is done
+  
+  
+  
+  // Here initail the parameter
+  bool Pen = false ; // "false" means the pen is down 
+  Turtle_Location[0] = 0;  // Turtle_Location[0]  is X-Axis
+  Turtle_Location[1] = 0;  // Turtle_Location[0]  is Y-Axis
+  face = 1 ;  // 1 is up , 2 is right , 3 is down , 4 is left
+  int step = 0;
+  int X_Current = 0;
+  int Y_Current = 0;
+  bool remain = true;
+  
+  
+  // Command is below
+	// 1. Pen UP
+	// 2. Pen DOWN
+	// 3. Face to Right
+	// 4. Face to Left
+	// 5. Enter the Step
+	// 6. Print 20x20 Array (if Up,Print *)
+	// 9. End	
+  
+  cout << endl << endl;
+  cout << "Now the Pen is down,and face is facing up" <<endl;
+  
+  
+ while(remain){
+ 	  
+  
+  cout << "1.Pen UP" <<endl;
+  cout << "2.Pen DOWN" <<endl;
+  cout << "3.Face to Right" <<endl;
+  cout << "4.Face to Left"<<endl;
+  cout << "5.Enter the step"<<endl;
+  cout << "6.Print Array"<<endl;
+  cout << "7.Information"<<endl;
+  cout << "9.End"<<endl;
+  cout << endl << endl;
+  cout << "Please enter the command"<<endl;
+   
+  cin >> Command_Enter;
+  cout << endl << endl;
+  
+  
+  
+  /*
+  for (int i = 0 ; i< 7; i++){
+  	  
+  	if(  *(Command+i) == Command_Enter){
+  		Command_State = Command_Enter ; 
+	  }
+  	
+  }*/
+  
+  //cout << Command_State;  
+  
+  
+  switch(Command_Enter){
+  	
+  	// Pen Up 
+  	case 1:         
+  	   Pen = true ;		   	
+        break;
+        
+    // Pen Down       
+    case 2: 
+  	   Pen = false ;		   	
+        break;  
+        
+    // Turn Right  
+    case 3:
+    	if(face!=4)
+    	  face +=1 ; 
+    	else
+    	  face -= 3 ;        
+        break;
+        
+    // Turn Left   
+    case 4 :
+    	if(face!=1)
+    	 face -= 1;
+    	else
+    	 face += 3;
+    	break;
+    
+	
+	// 5.Enter the Step 	
+    case 5 :
+    	// Enter the step
+    	cout <<endl ;
+    	cout << "Please enter the step " << endl ;
+        cin >> step ;
+        cout << "Your step is " <<step <<endl;
+       // cout << face;
+       
+            X_Current = Turtle_Location[0];
+			Y_Current = Turtle_Location[1];
+	
+        // Reallocate the map
+        switch(face){
+        				
+			
+			case 1:	 // Up	  
+			  
+			  Turtle_Location[1] += step;  // Renew the turtle location
+				if(Pen == true){
+					
+				   for(int i = Y_Current; i<Turtle_Location[1] ; i++){
+				   	
+				   	Floor[X_Current][i] = '*';
+				   	
+				     }   // end for
+								
+				} // end if
+	    	    break;	
+	    	    
+						
+			case 2: // Right 
+				Turtle_Location[0] += step;
+				
+				if(Pen == true){
+					
+				   for(int i = X_Current; i<=Turtle_Location[0] ; i++){
+				   	
+				   	Floor[i][Y_Current-1] = '*';
+				   	
+				     }   // end for
+								
+				} // end if
+				
+		     break;	
+				
+			case 3:
+				Turtle_Location[1] -= step;
+				
+				if(Pen == true){
+					
+				   for(int i = Y_Current; i>Turtle_Location[1] ; i--){
+				   	
+				   	Floor[X_Current][i] = '*';
+				   	
+				     }   // end for
+								
+				} // end if
+				
+			break;	
+				
+				
+			case 4:
+				Turtle_Location[0] -= step;
+        		
+				if(Pen == true){
+					
+				   for(int i = X_Current; i>Turtle_Location[0] ; i--){
+				   	
+				   	Floor[i][Y_Current] = '*';
+				   	
+				     }   // end for
+								
+				} // end if
+        	
+        	   break;
+        	   
+		}
+               
+        
+	    break; 
+	 
+	 
+	// Print     
+    case 6 :
+    for(int i = 0 ; i <20 ; i++){
+        for(int j=0 ;j<20;j++){
+       	
+       	  cout << Floor[i][j]<<" " ;
+       	
+       	   }	
+        cout << endl;	
+	}
+  
+    	
+    break;
+	
+	case 7 : 
+	cout << "X : " << Turtle_Location[0] <<endl;
+	cout << "Y : " << Turtle_Location[1] <<endl;
+	cout << "face : " << face <<endl;
+	cout << "Pen is Up : " << Pen <<endl;
+	cout << endl;
+	
+	
+	break;
+	
+	
+	
+	// End
+	case 9 :
+	
+	cout << "End program!! " <<endl;
+	remain = false;
+	break;	
+      
+    	
+        
+        
+        
+    default: 
+            cout << "Error !!!" << endl;
+			exit(0); 
+    
+  
+  }
+  
+  
+  
+}
+  
+  
+  
+
+
+ for(int i = 0 ; i<20 ; i++){
+	
+	delete [] Floor[i];	
+}
+
+    delete [] Floor;
+	
+	system("pause");
+	return 0 ;
+	
+	
+	
+	
+} 
