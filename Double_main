@@ -1,0 +1,189 @@
+#include<iostream>
+#include "StringNode.h"
+#include "StringLinkedList.h"
+#include "GameEntry.h"
+using namespace std;
+#include<iomanip>
+
+int main()
+{
+    StringNode *head=new StringNode; // create a new pointer to point the biggest number   
+    StringNode *temp=new StringNode; // create a new pointer to point the current number   
+   
+   //create StringNode* to store the data
+    StringNode *first = new StringNode;
+    StringNode *second = new StringNode;
+    StringNode *third = new StringNode;
+    StringNode *fourth = new StringNode;
+    StringNode *fifth = new StringNode;
+    StringNode *sixth = new StringNode;
+    StringNode *seventh = new StringNode;
+    StringNode *eighth = new StringNode;
+    StringNode *ninth = new StringNode;
+    StringNode *tenth = new StringNode;
+    
+    // Let head pointer to point the first element
+    head->next=first;
+    
+    //Set the name of the each element
+    first->elem.name="Elma";
+    second->elem.name="Steve";
+    third->elem.name="Wendy";
+    fourth->elem.name="Kevin";
+    fifth->elem.name="Jack";
+    sixth->elem.name="Oscar";
+    seventh->elem.name="Ryan";
+    eighth->elem.name="Adam";
+    ninth->elem.name="Ken";
+    tenth->elem.name="Lary";
+    
+    //Set the score of the each element
+    first->elem.score=1000;
+    second->elem.score=900;
+    third->elem.score=800;
+    fourth->elem.score=700;
+    fifth->elem.score=600;
+    sixth->elem.score=500;
+    seventh->elem.score=400;
+    eighth->elem.score=300;
+    ninth->elem.score=200;
+    tenth->elem.score=100;
+    
+    // To construct the singly linked list 
+    first->next=second;
+    second->next=third;
+    third->next=fourth;
+    fourth->next=fifth;
+    fifth->next=sixth;
+    sixth->next=seventh;
+    seventh->next=eighth;
+    eighth->next=ninth;
+    ninth->next=tenth;
+    tenth->next=NULL;
+   
+   
+   
+    cout<<"The player's list before sorting: "<<endl<<endl;
+   
+   // Let temp pointer to point the first element 
+    temp->next=head->next;
+    
+    
+   //use while to print the name and score 
+    while(temp->next!=NULL)
+   {
+     cout<<temp->next->elem.name<<setw(10)<<temp->next->elem.score<<endl;
+     temp->next = temp->next->next;
+     }
+    
+    // create the new StringNode* to let user enter
+    StringNode *newest = new StringNode;
+    string newname;
+    int newnumber;
+    
+    cout<<"\nPlease enter the player's name: ";
+    cin>>newname;
+    
+    cout<<"\nPlease enter the player's score: ";
+    cin>>newnumber;
+    newest->elem.name=newname;
+    newest->elem.score=newnumber;
+    
+    
+ // To distinguish the number is bigger than each element or not   
+    if(newnumber>first->elem.score)
+{
+    head->next=newest;
+    newest->next=first;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>second->elem.score)
+{
+    first->next=newest;
+    newest->next=second;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>third->elem.score)
+{
+    second->next=newest;
+    newest->next=third;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>fourth->elem.score)
+{
+    third->next=newest;
+    newest->next=fourth;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>fifth->elem.score)
+{
+    fourth->next=newest;
+    newest->next=fifth;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>sixth->elem.score)
+{
+    fifth->next=newest;
+    newest->next=sixth;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>seventh->elem.score)
+{
+    sixth->next=newest;
+    newest->next=seventh;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>eighth->elem.score)
+{
+    seventh->next=newest;
+    newest->next=eighth;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>ninth->elem.score)
+{
+    eighth->next=newest;
+    newest->next=ninth;
+    ninth->next=NULL;
+    delete tenth;}
+else
+if(newnumber>tenth->elem.score)
+{
+   ninth->next=newest;
+   newest->next=NULL;
+   delete tenth;}
+else
+if(newnumber < tenth->elem.score)
+{
+  tenth->next=NULL; 
+  delete newest;}
+
+ // use temp to print 
+   temp->next=head->next;
+  
+  // print the final 
+   cout<<"\nThe new player's list after sorting"<<endl<<endl;
+   
+   
+   while(temp->next!=NULL)
+   {
+     cout<<temp->next->elem.name<<setw(10)<<temp->next->elem.score<<endl;
+     temp->next = temp->next->next;
+     }
+
+
+
+system("pause");
+return 0;
+}
+
+    
+    
+    
