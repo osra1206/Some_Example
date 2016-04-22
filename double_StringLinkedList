@@ -1,0 +1,50 @@
+#ifndef STRINGLINKEDLIST_H
+#define STRINGLINKEDLIST_H
+
+#include<iostream>
+#include "GameEntry.h"
+
+using namespace std;
+
+class StringLinkedList
+{
+      public:
+             StringLinkedList();
+             ~StringLinkedList();
+             bool empty() const;
+             const GameEntry& front() const;
+             void addFront(const GameEntry& e);
+             void removeFront();
+             
+                     StringNode* head;
+                     };
+      
+      StringLinkedList::StringLinkedList()
+      :head(NULL){}
+      
+      StringLinkedList::~StringLinkedList()
+      {while(!empty())removeFront();}
+      
+      bool StringLinkedList::empty() const
+      {return head==NULL;}
+      
+      const GameEntry& StringLinkedList::front()const
+      {return head->elem;}
+      
+      void StringLinkedList::addFront(const GameEntry& e)
+      {
+           StringNode* v=new StringNode;
+           v->elem=e;
+           v->next=head;
+           head=v;
+           }
+           
+      void StringLinkedList::removeFront()
+      {
+           StringNode* old=head;
+           head=old->next;
+           delete old;
+           }
+      
+      
+#endif
