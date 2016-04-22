@@ -1,0 +1,65 @@
+#include<iostream>
+#include "Scores.h";
+#include<iomanip>
+using namespace std;
+
+int main()
+{    
+   Scores s;
+   GameEntry g;
+   string first;
+   int second;
+   
+   //use Scores's object to store the name  
+   s.entries[0].name="Samuel";
+   s.entries[1].name="Jason";
+   s.entries[2].name="Steve";
+   s.entries[3].name="Peter";
+   s.entries[4].name="Wendy";
+   s.entries[5].name="Sandy";
+   s.entries[6].name="Ashely";
+   s.entries[7].name="Oscar";
+   s.entries[8].name="Kevin";
+   s.entries[9].name="Johnson";
+      
+   //use Scores's object to store the score                  
+   s.entries[0].score=999;
+   s.entries[1].score=888;
+   s.entries[2].score=777;
+   s.entries[3].score=666;
+   s.entries[4].score=555;
+   s.entries[5].score=444;
+   s.entries[6].score=333;
+   s.entries[7].score=222;
+   s.entries[8].score=111;
+   s.entries[9].score=100;
+   
+   
+   // print the array now
+   cout<<"The situation of the array now"<<endl<<endl;
+   for(int i=0;i<10;i++)
+   cout<<s.entries[i].name<<"  "<<s.entries[i].score<<endl;
+   
+   
+   cout<<endl<<endl;
+   cout<<"Please enter the name"<<endl;
+   
+   cin>>first; //enter the new name
+   g.name=first; // use GameEntry store the name
+   
+   
+   cout<<endl<<"Please enter the score"<<endl;
+   
+   cin>>second; // enter the new score
+   g.score=second; // use GameEntry store the score
+   
+   s.add(g);  // check the number is bigger than the smallist number or not
+   
+   
+   // print the array after changing
+   cout<<endl<<"Before entering,the situation of the array now"<<endl;
+   for(int i=0;i<10;i++)
+   cout<<s.entries[i].name<<" "<<s.entries[i].score<<endl;
+
+    system("pause");
+}
