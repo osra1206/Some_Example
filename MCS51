@@ -1,0 +1,919 @@
+;---------------------Programming of multitasking about tasking--------------------------
+;Using Led be the task , and another led be the second task to do multitasking
+       
+	   
+	   
+	   
+	   
+	   ;Problem :      Change the interrupt of Stack
+	   
+	   
+	   
+	   
+;---------------------Structure-------------------------------------------
+
+;20H -  4FH Special Use
+;50H -	 6DH Stack & Data
+;74H -  78H Data Table	
+;79H -  7DH  Bias Table 
+					
+;------------Define Constant value-------------------------   
+	   
+	   Commnad_Light       equ     p2.0       ; For the Command Line Using "Light up"
+		                                      ; Must run faster than other program
+	  
+
+	  
+	  
+; =====================20H-2FH========================================= 	   
+
+
+
+   ;Create four Task and Initil only 3 Tasks run	   
+	   Task_led1     equ     20h.0      
+       Task_led2     equ     20h.1
+	   Task_led3     equ     20h.2
+
+
+	   Test          equ     20h.3
+      
+
+
+	 ;Command_Line Select   
+	   Command_Windows	   equ     21h.0						
+	   Command_New 	       equ     21h.1	
+	   Command_Stop        equ     21h.2	
+	   Command_Terminate   equ     21h.3
+	   Command_Restart     equ     21h.4	
+		   
+		   
+     ;Select New/Delete Tasks		   
+	   Task1_Select        equ     22h.0
+	   Task2_Select        equ     22h.1
+	   Task3_Select        equ     22h.2
+
+	   delete_tail         equ     23h.0
+	   terminate_tail      equ     23h.1
+	   command_top         equ     23h.2
+
+	
+
+
+
+;==============30H-4FH============================================================
+	   Pid_counter         equ     30h 
+	   Stack_Table         equ     31h
+		    
+		   
+	   temp                equ     32h   
+	   temp_1	           equ     33h
+	   temp_2	           equ     34h
+	   temp_3	           equ     35h
+
+	   Head                equ     36h 
+	   Tail                equ     37h
+
+
+	    ;Set Stack and counter	   
+	    
+       counter             equ     38h        ;Store the number of counter	                                           
+       test_zero           equ     39h        		
+	   delete_counter      equ     3Ah
+	   terminate_counter   equ     3Bh
+	   Stack_Terminate     equ     3Ch
+	   Free_Space         equ      3Dh
+
+
+
+	   Bias_table        equ        44h
+	   PID               equ        45h
+	  
+	   
+
+	   
+	   
+		   
+
+
+	   Stack               equ     40h	  
+	   			  
+									
+		 
+	
+	   
+		
+	   ;Led means the Task   
+       led_1          equ     p1.0       ; Task 1
+	   led_2          equ     p1.1       ; Task 2
+	   led_3          equ     p1.2       ; Task 3	   
+
+	      
+		   
+		   
+;-----------------------------End Define--------------------------------------------------------   		   
+       
+   
+	   
+;-----------------------------Start-------------------------------------------------------------------------
+	   org  0H    ; Initialize
+	   jmp  START
+	   
+	   org  0BH
+	   jmp timer0
+
+	   ORG  33H
+	   jmp  IN
+	   
+	   
+;========================SET Counter=================================================	  
+
+IN:
+
+     mov R6 , #1000
+	 reti 
+
+
+
+
+START:  
+        
+        setb       EA                          ; ????
+        mov        tmod,#00000001b             ;?? timer 0 ??? mode 1      
+		
+			
+		setb       Task_led1               ;Set (led_1 led_2 led_3) light
+		setb       Task_led2
+		setb       Task_led3
+		
+		
+		clr        Task1_Select 
+		clr        Task2_Select
+		clr        Task3_Select
+	
+		
+		
+		mov dptr , #Command_label 
+         		
+		mov  50h , dpl
+		mov  51h , dph
+		mov  52h , #0 ; 
+		
+		;Set the Label in Ram start : #30h
+		;Actually Adress is below:  // 31 32 Command_Line
+		                            // 35 36 Task_1
+									// 39 3a Task_2
+									// 41 42 Task_3
+
+		
+		
+		
+		
+	
+		
+		
+		mov        counter, #00000001b	
+        mov        Pid_counter, #00000000b	       ; Task1~2 + Command_Line
+		mov        Free_Space , #00000000b  ; Total 6 tasks including Command_Line	
+		mov        PID 	  ,   #00000000b
+
+
+		mov        test_zero, counter
+		mov        SP,      #52h            ; Set Stack
+		mov        Stack   ,#50h
+		mov        Stack_Table	  , #74h
+		mov        Stack_Terminate, #7Ah
+
+		
+
+	
+
+
+		mov      Bias_table , #79h
+		mov       79h , #86h
+		mov       7Ah , #93h
+		mov       7Bh , #9Ah
+		mov       7Ch , #9Fh
+		mov       7Dh , #0AFh
+
+		
+									  
+									  
+							
+		
+		
+		
+COUNT:  ACALL Set_Timer
+
+;==================================================================================================
+
+
+
+
+Queue:
+
+      
+    
+	     mov        Head   , #50H  ;Set the Head point to Stack
+		 mov        Tail   , #52H  ;Set the Tail point to Command ptr
+
+		  
+	  
+	  
+	  	 setb        Task1_Select 
+		 setb        Task2_Select 	 
+	 	 setb        Task3_Select 	
+		 
+		 ;clr Test 
+
+		 mov A, #0FH	 ; SET P0.0~P0.3 ready to recieve button
+		 mov p0 , A     ;    
+
+		 JMP Command_label
+
+	
+	 
+	 
+	                                  
+Command_label:	   
+	   
+			setb command_top
+	
+	Scan: 
+	       
+           setb Command_Windows
+		   clr  Commnad_Light 
+
+		  
+
+          
+		   mov A ,p0 
+		   mov A , #00H
+
+		   JNB ACC.0,NEW
+		   JNB ACC.1,Delete
+		   JNB ACC.2,Nothing
+		   
+
+		   JMP Scan
+
+			  
+  
+	 
+	     
+  NEW:   
+   
+   
+   ; Create in order
+   ; If "Task 4" have , Just Create "Task 5"
+   ; Every Task can be create
+   
+       
+	 inc Pid_counter
+	 inc PID
+	 
+
+
+     NEW_1:
+	 
+
+	    
+	    JNB Task1_Select ,NEW_2
+
+		
+		mov dptr , #Led_label_1 					
+		mov  temp ,   dpl
+		mov  temp_1 , dph
+		
+	    call ADD_Link	 		
+			
+					
+		CLR Task1_Select
+	    JMP Wait_Jump
+		
+		
+  
+	 NEW_2:
+        JNB Task2_Select , Delete
+		
+		
+		
+		mov dptr , #Led_label_2 					
+		mov  temp ,   dpl
+		mov  temp_1 , dph
+		
+	    call ADD_Link	
+		
+		
+	
+		CLR Task2_Select
+	    JMP Wait_Jump
+   
+	
+    NEW_3:
+       JNB Task3_Select , Delete
+	   
+	    mov dptr , #Led_label_3 					
+		mov  temp ,   dpl
+		mov  temp_1 , dph
+	   
+	    call ADD_Link	
+		
+		
+		CLR Task3_Select
+	    JMP Wait_Jump
+	   
+	  
+	  
+	   
+  Delete:
+						
+    mov  R3 , counter
+
+    setb Test
+
+    CJNE R3 , #1 , DE
+	setb        Task1_Select 
+	setb        Task2_Select 
+	
+	JMP NEW
+
+	
+	DE:
+	
+	
+    dec  counter  ;  Number substract 1
+	dec  Pid_counter 
+	mov  delete_counter , #1
+
+	mov  test_zero , counter
+	 
+	 
+			    
+
+	 call Delete_Link   
+	 			
+	 JMP Wait_Jump	
+	 
+	 
+	   
+	 
+  Nothing:
+	   
+	 setb Command_Windows
+	 JMP Wait_Jump	    
+	 
+	 	
+		 
+  Wait_Jump:		 
+		 
+	 MOV R1,#1000H   
+     DJNZ R1,$ 
+		 
+  Error:		 
+	 MOV R1,#1000H   
+     DJNZ R1,$  
+		 
+		 
+;===========ADD Link===============================================   
+   ADD_Link:	   
+   
+
+		; Store  the current address
+		pop 03H
+        pop 04H	  
+			
+	  mov R7 , 	 Free_Space
+	  
+	  
+	  
+	   
+	 
+   CJNE R7 ,#0 , Relocate_In_Free
+
+
+
+ADD_Start:
+		
+	    mov R0 , Tail    ; R0 Store Tail
+		mov R1 , Tail    ; R1  Store next PTR
+	    inc R1
+		
+	   
+	    mov @R0 , 01h    ; Exchange the address
+		mov @R1 , Tail
+
+
+	
+		mov R5 , #0			 ; 
+		
+
+	   ;Store into the Stack
+		push 00h     ; PTT		  
+		
+
+		push 32H     ; temp	   LABEL
+		push 33H     ; temp_1
+        
+		push 05h         ;  ACC 
+		push 05h         ;  SP  
+		push 45h         ;ID	 
+
+
+
+	    mov  R0 , Bias_table
+	    inc Bias_table
+
+	    mov temp_3 , @R0
+       
+		push 35h     ;Bias		
+		push 05h	  ;	ptr
+		
+	  inc  counter  ;  Number plus 1   
+      mov  test_zero , counter 	
+       
+     	  
+	  ;Change the Tail
+	  mov A , Tail
+	  add A , #8
+	  mov Tail , A
+
+
+	  
+	  push 04H
+	  push 03H
+	   
+      ret
+
+
+
+Relocate_In_Free:
+
+
+	 dec  Stack_Table 
+	 mov R0 , Stack_Table 
+	 
+	 
+
+	 mov temp_3, @R0
+	 
+
+   ;-----------------------
+
+
+
+     mov  R1 , Tail
+	 mov @R1 , 	temp_3
+
+
+
+     mov  R0 , temp_3		; PTT 
+	 mov   @R0 , Tail
+
+	 inc temp_3				; Label 
+     mov R0 , temp_3
+	 mov @R0 , 32H
+
+	 inc temp_3			    ; Label 
+     mov R0 , temp_3
+	 mov @R0 , 33H
+
+	  inc temp_3		    ; ACC
+     mov R0 , temp_3
+	 mov @R0 , #0
+
+	 inc temp_3			    ; SP
+     mov R0 , temp_3
+	 mov @R0 , #0
+
+	 inc temp_3			    ; ID 
+     mov R0 , temp_3
+	 mov @R0 , 45H
+
+					    
+	 inc temp_3			   ; BIAS 
+     mov R0 , temp_3  
+   	 mov  R1 , Bias_table
+	 inc Bias_table		
+ 	 mov  06h , @R1  
+	 mov @R0 , 06h
+
+
+
+	 inc temp_3		    ; PTR 
+     mov R0 , temp_3
+	 mov @R0 , #0
+
+     
+	 mov Tail , temp_3
+
+
+	  inc  counter  ;  Number plus 1   
+      mov  test_zero , counter 	
+
+	  dec	Free_Space 
+
+
+	  ;Clear Data of used Table
+	   mov R0 , Stack_Table 
+	   mov @R0	, #0
+
+
+
+	  push 04H
+	  push 03H
+	   
+      ret
+
+
+
+
+
+
+
+
+;=====================End New================================================   
+
+	   
+;======================Delete======================================================  	   
+	   
+ Delete_Link:
+  
+  
+  
+  	pop 03H
+    pop 04H	   
+
+	setb delete_tail
+
+
+    mov A,delete_counter	
+
+    
+
+	CJNE  A , 38h, D_start
+
+	clr delete_tail ; Means the Tail 
+	
+ 
+D_start:
+
+   
+
+   mov R0,Head
+   inc R0 
+   inc R0  ;Point to PTR
+
+   mov R7 , 00H
+
+   
+
+
+
+
+   dec delete_counter  ; N-1  Times
+
+   mov R6 ,	 delete_counter
+
+
+   CJNE R6, #0 ,	D_JUMP_ID
+   JMP	  D_Collect
+
+	  
+
+
+ D_JUMP_ID:	 ; Find the delete item 
+
+   
+
+   mov A , @R0
+   add A , #7
+   mov R0 ,A 
+   mov R7 , 00H
+
+   dec delete_counter
+
+   mov R6,delete_counter
+
+
+   CJNE R6, #0 ,	D_JUMP_ID
+
+
+   
+D_Collect:
+
+    mov R1 , Stack_Table 
+	mov temp_2, @R0
+
+
+
+	mov @R1 , temp_2
+	inc Stack_Table
+
+	mov R0 ,  07H
+	inc	Free_Space 
+
+
+	
+   JNB	 delete_tail , D_Change_Tail
+
+D_Exchange_Link:
+
+	mov temp ,   R0
+	mov temp_1, @R0
+
+	mov   A    ,   temp_1
+	add   A    ,   #7
+	mov   R0   ,   A 
+	mov   temp_1 ,@R0
+
+    mov R0 ,temp
+    mov R1 ,temp_1
+
+	mov @R0 ,temp_1
+	mov @R1 , temp
+
+   
+   JB    delete_tail  ,  D_Return
+
+
+D_Change_Tail:
+
+	mov A , Tail
+	subb A , #7
+	mov R0 ,A
+	mov temp_1, @R0
+	mov Tail , temp_1
+
+
+
+D_Return:
+	
+			  
+	
+
+	Push   04h
+	Push   03h
+
+
+    RET
+
+;=============================END Delete==============================================
+
+
+
+
+
+;=====================End Termiante===================================
+
+
+
+
+
+
+
+
+	
+	
+;======================LED Light======================================================   
+	      
+;-------------led_1--------------------	   
+Led_label_1:
+	   
+	   MOV  R1,#20H   
+       DJNZ R1,$   
+	   
+	   CLR  led_1     ;
+	   CALL DELAY
+	   SETB led_1
+	   CALL DELAY
+	   
+	   jmp Led_label_1
+	  
+
+ Led_label_2:
+ 
+       MOV R1,#20H   
+       DJNZ R1,$   
+	   
+	  
+	   CLR  led_2     ;
+	   CALL DELAY
+	   SETB led_2
+	   CALL DELAY
+	   
+	   jmp Led_label_2 
+
+		 
+		 
+Led_label_3:
+	   
+	   MOV  R1,#20H   
+       DJNZ R1,$   
+	   
+	   CLR  led_3     
+	   CALL DELAY
+	   SETB led_3
+	   CALL DELAY
+	   
+	   jmp Led_label_3
+	  
+
+	   
+	   ;====================Command_Line============================================================	   
+
+	   
+	   
+
+ ;-----------------------------------------
+ ;----delay-------------------------------
+	 
+		 
+		 
+DELAY:  MOV R0,#1 ;248
+        D1: MOV R1,#2 ;200
+        D2: DJNZ R1,D2
+            DJNZ R0,D1
+            RET
+;-----------------------End Light------------------------------------------------------
+
+Synchronization:
+
+          ; Remove Timer
+          mov     th0,#0   ;50ms????  ??TH0
+          mov     tl0,#0 ;??TL0
+		
+          clr     tr0                         ;????
+          mov     IE,#10000000b               ;???? Timer0 ?? 
+
+          ret
+		  
+		  
+
+
+
+
+
+timer0:         
+;**********************Context Switch***********************************************		
+
+			  setb led_1
+			  setb led_2
+			  setb led_3
+			  setb 	Commnad_Light 
+			  
+
+;Step 1 : store address
+State_Reserve:		
+     
+	          
+		
+			  
+			  pop  04h   ; poping data to 04h , 05h
+		      pop  05h	
+
+//		JB  Command_Windows ,  Change_queue
+//
+//  
+//
+//
+//save_state:
+//      mov R0 , Stack		 
+//		 mov R1 , Stack
+//		 inc R1 
+//		 
+//		 
+//		 mov @R1 , 04h
+//		 mov @R0 , 05h
+//				
+//	 
+
+
+
+	 
+	 
+Change_queue:     
+    
+ 			  	
+	
+					 
+//		 clr Command_Windows
+
+         DJNZ  test_zero , Stack_not_top
+ 		 JMP   Stack_top
+ 
+ 
+ Stack_not_top:  
+     	  
+
+	  JNB command_top ,  Process_not_top
+
+		  
+	Command_not_top:
+
+		 inc Stack       ; point to ptr 
+	     inc Stack
+		
+		 mov R0 , Stack  ; point to ptr  		 
+		 mov temp ,@R0   ; temp store the ptr
+		 
+		 
+	     mov R0 , temp	
+         inc R0		
+		 
+		 
+		 mov R1 , temp
+		 inc R1
+		 inc R1
+
+		 clr command_top
+		 
+		 
+		 mov Stack , R0
+      
+	  JMP Led_changeing
+
+	
+	
+	
+	Process_not_top:
+
+    	mov A ,  Stack
+	    add A ,  #6
+		mov R0 , A
+
+		mov temp ,@R0   ; temp store the ptr
+		 
+		 
+	     mov R0 , temp	
+         inc R0		
+		 
+		 
+		 mov R1 , temp
+		 inc R1
+		 inc R1
+		 
+		 
+		 mov Stack , R0
+      
+	  JMP Led_changeing
+
+	  
+ Stack_top:	 
+      
+	 
+
+      mov  Stack , #50h
+      mov  R0 ,Stack
+	  mov  R1 ,Stack
+	  inc  R1
+  	  		 
+      mov test_zero , counter
+  		
+		
+Led_changeing: 
+         		 
+		 mov temp ,   @R0
+		 mov temp_1 , @R1
+		 		 		 
+		  push 32h
+		  push 33h
+		 
+		 
+		  ACALL Set_Timer
+		 
+		 	 
+		 
+ jump_back:	 
+		 reti
+		 
+		 
+		 
+		 
+		 
+
+
+Set_Timer:
+
+		  mov     th0,#(65536-200) / 256    ;50ms????  ??TH0
+          mov     tl0,#(65536-200) mod 256  ;??TL0
+		
+          setb    tr0                         ;????
+          mov     IE,#10000011b               ;???? Timer0 ?? 
+
+          ret	 
+
+	                   
+;--------------------------------------
+
+
+
+
+
+
+
+
+end
+	  
+	  
+	  
+	  
