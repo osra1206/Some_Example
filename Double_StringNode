@@ -1,0 +1,19 @@
+#ifndef STRINGNODE_H
+#define STRINGNODE_H
+
+#include<iostream>
+#include "GameEntry.h"
+
+using namespace std;
+
+class StringNode
+{
+      public:
+             GameEntry elem; //use GameEntry to store the name and score
+             StringNode* next;
+             
+                          
+             
+              };
+              
+#endif
