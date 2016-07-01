@@ -1,0 +1,178 @@
+#include<iostream>
+#include<stdlib.h>
+#include<iomanip>
+#include<time.h>
+
+using namespace std;
+
+
+
+void Bubble_Sort(int a[], int lengh, int number1, int number2);
+void Swap(int array[], int indexA, int indexB);
+void Print(int t[] , int number );
+
+void Print(int t[],int number){
+
+	cout << "Your array number is : ";
+	for (int i = 0; i < number; i++){
+
+		cout << t[i] << " ";
+
+	}
+
+	cout << endl;
+}
+
+	 
+
+
+void Swap(int array[], int indexA, int indexB)
+{
+	int tmp = array[indexA];
+	array[indexA] = array[indexB];
+	array[indexB] = tmp;
+}
+
+void Sort(int array[] , int length){
+
+	for (int i = 0; i < length;i++){
+		for (int j = i + 1; j < length; j++){
+			if (array[i]>array[j]){
+				Swap(array, i, j);
+			}
+						
+		}
+}
+
+	
+}
+
+
+int main(){
+
+	//  Initialize the array
+	int length = 6;
+	int Lottery_Number[6] = { 0 };
+	int My_Number[6] = {0};
+	int Get[6] = { 0 };
+	int Entry = 0;
+	bool Test_Entry = true;
+	bool Test_Reuse = false;
+	int number = 0;
+	
+
+
+	//Information to User
+	cout << "Welcome to the Lottery !! \n";
+	cout << "Please enter the number! ";
+	
+	while (number != length){
+
+		Test_Entry = true;
+		
+		// Test Entry
+		while (Test_Entry){
+
+			cout << "Your number : ";
+			cin >> Entry;
+
+			if ((Entry > 42) || (Entry <= 0)){
+				cout << "Your number bigger than 42 , Enter again \n";
+				continue;
+
+			}
+
+			else{
+				Test_Reuse = false;
+				for (int i = 0; i <= number; i++){
+					if (My_Number[i] == Entry){
+						cout << "You reuse the number!!!\n";
+						cout << "Please enter again!!\n";
+						Test_Reuse = true;
+						break;
+
+					}//end if
+
+				}//end for
+
+				if (Test_Reuse)
+					continue;
+
+
+				Test_Entry = false;
+			}//end else
+			
+
+		}// end test while
+
+		My_Number[number] = Entry;
+		number++;
+				
+
+
+
+	} // end while
+
+
+	number = 0;
+
+	// Generate the number
+	while (number != length){
+
+		Test_Reuse = false;
+		srand(time(0));
+		int temp = rand() % 42 + 1;  //avoid 0 situation 
+
+		for (int i = 0; i <= number; i++){
+
+			if (Lottery_Number[i] == temp){
+				Test_Reuse = true;
+				break;
+			}//end if
+						
+		} // end if
+
+		if (Test_Reuse == true)
+			continue;
+
+		Lottery_Number[number] = temp;
+		number++;
+		
+	} // end while
+
+
+	Sort(Lottery_Number, length);
+	Sort(My_Number, length);
+
+	
+	Print(My_Number, length);
+	Print(Lottery_Number, length);
+
+
+
+
+	number = 0;
+		 
+
+	for (int i = 0; i < length; i++){
+
+		for (int j = 0; j < length; j++){
+			if (My_Number[j] == Lottery_Number[i]){
+				Get[number] = My_Number[j];
+				number++;
+			}
+		}
+
+
+	} // end for
+
+	Print(Get, length);
+
+
+	system("pause");
+	return 0;
+
+
+		}//end main
+
+
