@@ -1,0 +1,111 @@
+#include<iostream>
+#include<iomanip>
+using namespace std;
+
+
+
+
+
+int main(){
+
+
+
+
+	int number = 256;
+
+	int* First = new int[number];  // Create 256 array numbers
+	int* Second = new int[number];
+	int* Third = new int[number];
+
+	char* First_char = new char[number];
+	char* Second_char = new char[number];
+	
+
+	for (int i = 0; i < 256; i++){
+
+		First[i] = 0;
+		Second[i] = 0;
+		Third[i] = 0;
+
+	}
+		
+	
+
+	cout << "Please enter the number of 1st number !"<<endl;
+	cin.getline(First_char , 256);
+	cout << "Please enter the number of 2nd number !" << endl;
+	cin.getline(Second_char, 256);
+
+
+	int First_WordNumber = strlen(First_char);
+	int Second_WordNumber = strlen(Second_char);
+
+
+	for (int i = 0; i < First_WordNumber; i++){
+		
+		First[i]  = First_char[First_WordNumber - i - 1] - '0';						
+	}
+	
+
+	
+	cout << endl << endl;
+
+
+	for (int i = 0; i < Second_WordNumber; i++){
+
+		Second[i] = Second_char[Second_WordNumber - i - 1] - '0';
+	}
+
+	// deal with the number
+
+	int total_long = 0;
+	int Third_number = 0;
+	
+	if (Second_WordNumber>First_WordNumber)
+		total_long = Second_WordNumber;
+	else
+		total_long = First_WordNumber;
+
+
+
+	for (int i = 0; i < total_long; i++){
+
+		int Remainder = 0;
+		int count = 0;
+		int Quotient = Second[i] + First[i];
+
+		if (Quotient >= 10){
+			Remainder = Quotient - 10;
+			count = 1;
+		}
+		else
+			Remainder = Quotient;
+
+		Third[i] +=  Remainder;
+		
+		Third[i + 1] += count;
+	
+
+	
+		Third_number++;
+
+
+
+	}
+	
+
+		
+	for (int i = Third_number-1; i >= 0; i--){
+		
+		cout << Third[i];
+	}
+
+	
+
+
+
+
+	system("pause");
+	return 0;
+
+}//end main
